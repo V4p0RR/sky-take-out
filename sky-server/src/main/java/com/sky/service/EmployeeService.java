@@ -31,4 +31,27 @@ public interface EmployeeService {
      */
     PageResult getEmpPageByName(EmployeePageQueryDTO employeePageQueryDTO);
 
+    /**
+     * 启用/禁用员工
+     * 
+     * @param status
+     * @param id
+     */
+    void useOrBanEmp(Integer status, Long id);
+
+    /**
+     * 根据id查找员工
+     * 
+     * @param id
+     * @return
+     */
+    Employee getEmpById(Long id);
+
+    /**
+     * 根据id修改员工
+     * 
+     * @param employee
+     */
+    void updateEmpById(Employee employee);
+
 }

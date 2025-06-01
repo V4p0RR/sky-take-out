@@ -30,6 +30,7 @@ public class Result<T> implements Serializable {
         return result;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> Result<T> error(String msg) {
         Result result = new Result();
         result.msg = msg;

@@ -80,7 +80,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         long id = BaseContext.getCurrentId();
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
-        // TODO 设置创建人和修改人id 后期更改
         employee.setCreateUser(id); // 从线程中获取当前登录用户的id
         employee.setUpdateUser(id);
         employeeMapper.postEmp(employee);
@@ -98,5 +97,37 @@ public class EmployeeServiceImpl implements EmployeeService {
         long total = page.getTotal();
         List<Employee> list = page.getResult();
         return new PageResult(total, list);
+    }
+
+    /**
+     * 启用/禁用员工
+     * 
+     * @param
+     */
+    public void useOrBanEmp(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .build(); // 用employee封装，然后将mapper定义为修改员工，提高复用性
+        employeeMapper.updateEmp(employee);
+    }
+
+    /**
+     * 根据id查询员工
+     * 
+     * @param
+     * @return
+     */
+    public Employee getEmpById(Long id) {
+        return employeeMapper.getEmpById(id);
+    }
+
+    /**
+     * 根据id修改员工
+     * 
+     * @param employee
+     */
+    public void updateEmpById(Employee employee) {
+        employeeMapper.updateEmp(employee);
     }
 }

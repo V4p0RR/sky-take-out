@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -14,6 +15,7 @@ import com.sky.vo.EmployeeLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 员工管理
@@ -103,4 +106,39 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    /**
+     * 启用/禁用员工
+     * 
+     * @param status
+     * @param id
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    @PostMapping("/status/{status}")
+    public Result useOrBanEmp(@PathVariable Integer status, Long id) {
+        log.info("要设置的状态:{},员工id:{}", status, id);
+        employeeService.useOrBanEmp(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查找员工
+     * 
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<Employee> getEmpById(@PathVariable Long id) {
+        log.info("查找id为{}的员工", id);
+        Employee employee = employeeService.getEmpById(id);
+        return Result.success(employee);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @PutMapping
+    public Result updateEmpById(@RequestBody Employee employee) {
+        log.info("修改id为{}的员工信息", employee.getId());
+        employeeService.updateEmpById(employee);
+        return Result.success();
+    }
 }
