@@ -1,7 +1,13 @@
 server:
   port: 8080
+  servlet:
+    encoding:
+      enabled: true
+      charset: UTF-8
+      force: true
 
 spring:
+
   profiles:
     active: dev
   main:
@@ -9,19 +15,25 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/sky_take_out
+      url: jdbc:mysql://localhost:3306/sky_take_out?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
       username: root
       password: 123456
 
 mybatis:
   #mapper配置文件
+  
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.sky.entity
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #配置mybatis的日志, 指定输出到控制台
 
 logging:
+  file:
+    encoding: UTF-8
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
   level:
     com:
       sky:

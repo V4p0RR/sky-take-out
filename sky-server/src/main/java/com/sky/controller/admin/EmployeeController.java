@@ -22,7 +22,7 @@ import java.util.Map;
  * 员工管理
  */
 @RestController
-@RequestMapping("/admin/employee")
+@RequestMapping("/admin/employee") // 可指定基址
 @Slf4j
 public class EmployeeController {
 
@@ -38,12 +38,13 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/login")
+    // 返回带有EmployeeLoginVO类型参数的Result类！
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
 
         Employee employee = employeeService.login(employeeLoginDTO);
 
-        //登录成功后，生成jwt令牌
+        // 登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         String token = JwtUtil.createJWT(
