@@ -1,10 +1,17 @@
 package com.sky.config;
 
 import com.sky.interceptor.JwtTokenAdminInterceptor;
+import com.sky.json.JacksonObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -38,7 +45,25 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     /**
+     * 扩展mvc框架的消息转换器
+     * 解决日期被序列化为字节数组的问题
+     * 
+     * @param converters
+     */
+    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        log.info("开始扩展消息转换器");
+        // 创建一个消息转化器对象
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        // 设置对象转换器，可以将java对象转化为json字符串
+        converter.setObjectMapper(new JacksonObjectMapper());
+        // 将自己的转换器放入Spring MVC框架的容器中
+        converters.add(0, converter);
+
+    }
+
+    /**
      * 通过knife4j生成接口文档
+     * 
      * @return
      */
     @Bean
@@ -59,6 +84,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     /**
      * 设置静态资源映射
+     * 
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
