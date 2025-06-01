@@ -61,4 +61,17 @@
                 <where> id=#{id}
                 </where>
         </select>
+
+        <!-- editPassword -->
+
+        <update id="editPassword" parameterType="com.sky.dto.PasswordEditDTO">
+      update employee
+                <set> password=#{newPassword}
+                </set>
+                <where> id=#{empId}
+                </where>
+        </update>
+
+
+
 </mapper>

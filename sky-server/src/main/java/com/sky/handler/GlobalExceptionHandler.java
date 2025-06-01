@@ -2,6 +2,7 @@ package com.sky.handler;
 
 import com.sky.constant.MessageConstant;
 import com.sky.exception.BaseException;
+import com.sky.exception.PasswordEditFailedException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +49,18 @@ public class GlobalExceptionHandler {
         } else {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
+    }
+
+    /**
+     * 捕获修改密码异常
+     * 
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler
+    @SuppressWarnings("rawtypes")
+    public Result exceptionHandler(PasswordEditFailedException ex) {
+        return Result.error(ex.getMessage());
     }
 
 }
