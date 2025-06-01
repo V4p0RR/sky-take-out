@@ -16,7 +16,7 @@
 |------|------|
 | Spring Boot | 后端框架 |
 | MyBatis-Plus | ORM 持久层框架 |
-| Redis（可选） | 缓存与并发优化（可选） |
+| Redis | 缓存与并发优化 |
 | MySQL | 数据库 |
 | Maven | 构建工具 |
 | Lombok | 简化代码 |
