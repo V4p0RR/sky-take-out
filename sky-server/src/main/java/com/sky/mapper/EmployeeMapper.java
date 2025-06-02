@@ -1,9 +1,11 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.annotation.AutoFill;
 import com.sky.dto.EmployeePageQueryDTO;
-import com.sky.dto.PasswordEditDTO;
+
 import com.sky.entity.Employee;
+import com.sky.enumeration.OperationType;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -25,6 +27,7 @@ public interface EmployeeMapper {
      * 
      * @param employee
      */
+    @AutoFill(OperationType.INSERT)
     void postEmp(Employee employee);
 
     /***
@@ -40,6 +43,7 @@ public interface EmployeeMapper {
      * 
      * @param employee
      */
+    @AutoFill(OperationType.UPDATE)
     void updateEmp(Employee employee);
 
     /**
@@ -55,5 +59,6 @@ public interface EmployeeMapper {
      * 
      * @param passwordEditDTO
      */
-    void editPassword(PasswordEditDTO passwordEditDTO);
+    @AutoFill(OperationType.UPDATE)
+    void editPassword(Employee employee);
 }

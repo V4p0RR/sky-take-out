@@ -44,7 +44,7 @@
                         <if test="username!=null and username!=''"> username=#{username},
                         </if>
                         <if test="status!=null"> status=#{status},
-                        </if>   update_time= NOW()
+                        </if>   update_time= #{updateTime}, update_user=#{updateUser}
                 </set>
                 <where>  id=#{id}
                 </where>
@@ -64,11 +64,11 @@
 
         <!-- editPassword -->
 
-        <update id="editPassword" parameterType="com.sky.dto.PasswordEditDTO">
+        <update id="editPassword" parameterType="com.sky.entity.Employee">
       update employee
-                <set> password=#{newPassword}
+                <set> password=#{password} , update_time=#{updateTime}, update_user=#{updateUser}
                 </set>
-                <where> id=#{empId}
+                <where> id=#{id}
                 </where>
         </update>
 

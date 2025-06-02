@@ -19,7 +19,6 @@ import com.sky.result.PageResult;
 
 import com.sky.service.EmployeeService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -79,11 +78,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         BeanUtils.copyProperties(employeeDTO, employee);
         employee.setStatus(StatusConstant.ENABLE);
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        long id = BaseContext.getCurrentId();
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser(id); // 从线程中获取当前登录用户的id
-        employee.setUpdateUser(id);
+
         employeeMapper.postEmp(employee);
     }
 
@@ -147,7 +142,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         String oldPassword = passwordEditDTO.getOldPassword();
         if (DigestUtils.md5DigestAsHex(oldPassword.getBytes()).equals(employee.getPassword())) {
             passwordEditDTO.setNewPassword(DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes()));
-            employeeMapper.editPassword(passwordEditDTO);
+            Employee employee2 = Employee.builder()
+                    .password(passwordEditDTO.getNewPassword())
+                    .id(passwordEditDTO.getEmpId())
+                    .build();
+            employeeMapper.editPassword(employee2);
         } else {
             throw new PasswordEditFailedException("修改失败！原密码错误！");
         }
