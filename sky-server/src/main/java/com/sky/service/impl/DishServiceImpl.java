@@ -1,7 +1,17 @@
 package com.sky.service.impl;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sky.dto.DishDTO;
+import com.sky.entity.Dish;
+import com.sky.entity.DishFlavor;
+import com.sky.mapper.DishFlavorMapper;
+import com.sky.mapper.DishMapper;
 import com.sky.service.DishService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -9,5 +19,29 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class DishServiceImpl implements DishService {
+  @Autowired
+  private DishMapper dishMapper;
 
+  @Autowired
+  private DishFlavorMapper dishFlavorMapper;
+
+  /**
+   * 新增菜品
+   */
+  @Transactional
+  public void insertDish(DishDTO dishDTO) {
+    // 先插入这道菜进菜品表
+    Dish dish = new Dish();
+    BeanUtils.copyProperties(dishDTO, dish);
+    dishMapper.insertDish(dish);
+    log.info("菜品插入完成:{}", dish);
+    // 抽取出口味表
+    List<DishFlavor> flavors = dishDTO.getFlavors();
+    // 插入口味表
+    if (flavors != null && flavors.size() > 0) {
+      dishFlavorMapper.insertFlavor(flavors, dish.getId());
+      log.info("口味插入完成:{}", flavors);
+    }
+
+  }
 }
