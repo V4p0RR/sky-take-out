@@ -7,3 +7,8 @@ sky:
     username: root
     password: 123456
     url: jdbc:mysql://localhost:3306/sky_take_out?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+  alioss:
+    endpoint:  https://oss-cn-chengdu.aliyuncs.com
+    access-key-id: LTAI5t8QmPP97BwzFSSpvfVx
+    access-key-secret: waYaKOTm0rE0fuKAIfaD59boP5XgIq
+    bucket-name: web-sky-v1rtual
