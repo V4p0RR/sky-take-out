@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import com.sky.annotation.AutoFill;
+import com.sky.constant.AutoFillConstant;
 import com.sky.context.BaseContext;
 import com.sky.enumeration.OperationType;
 
@@ -53,10 +54,12 @@ public class AutoFillAspect {
       // 获取公共字段的setter
 
       try {
-        Method setCreateTime = entity.getClass().getDeclaredMethod("setCreateTime", LocalDateTime.class);
-        Method setUpdateTime = entity.getClass().getDeclaredMethod("setUpdateTime", LocalDateTime.class);
-        Method setCreateUser = entity.getClass().getDeclaredMethod("setCreateUser", Long.class);
-        Method setUpdateUser = entity.getClass().getDeclaredMethod("setUpdateUser", Long.class);
+        Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME,
+            LocalDateTime.class);
+        Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME,
+            LocalDateTime.class);
+        Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
+        Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
         // 设置公共字段
         setCreateTime.invoke(entity, now);
@@ -75,8 +78,9 @@ public class AutoFillAspect {
 
     } else if (operationType == OperationType.UPDATE) {
       try {
-        Method setUpdateTime = entity.getClass().getDeclaredMethod("setUpdateTime", LocalDateTime.class);
-        Method setUpdateUser = entity.getClass().getDeclaredMethod("setUpdateUser", Long.class);
+        Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME,
+            LocalDateTime.class);
+        Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
         // 如果是UPDATE操作，仅设置更新的属性
         setUpdateTime.invoke(entity, now);
