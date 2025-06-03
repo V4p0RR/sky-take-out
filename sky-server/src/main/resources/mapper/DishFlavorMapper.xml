@@ -20,4 +20,25 @@
 
 
   </insert>
+
+  <!-- updateFlavor -->
+
+  <select id="getFlavorsById" resultType="com.sky.entity.DishFlavor">
+    select *
+    from dish_flavor
+    <where> dish_id=#{id}
+    </where>
+  </select>
+
+  <!-- updateFlavor -->
+
+  <update id="updateFlavor" parameterType="com.sky.entity.DishFlavor">
+    <foreach collection="list" item="flavor" separator=";">
+      UPDATE dish_flavor
+      SET value = #{flavor.value}
+      WHERE id = #{flavor.id} AND dish_id=#{flavor.dishId}
+    </foreach>
+  </update>
+
+
 </mapper>

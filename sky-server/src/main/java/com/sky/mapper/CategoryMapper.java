@@ -55,4 +55,6 @@ public interface CategoryMapper {
      * @return
      */
     List<Category> list(Integer type);
+
+    String getNameById(Long id);
 }
