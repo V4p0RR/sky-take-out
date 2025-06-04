@@ -2,11 +2,13 @@ package com.sky.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import com.sky.entity.SetmealDish;
 
 @Mapper
+/**
+ * 这是套餐与菜品关系的mapper
+ */
 public interface SetmealDishMapper {
 
   /**
