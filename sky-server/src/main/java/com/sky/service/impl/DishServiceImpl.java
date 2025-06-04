@@ -9,14 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Category;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -34,6 +39,12 @@ public class DishServiceImpl implements DishService {
 
   @Autowired
   private CategoryMapper categoryMapper;
+
+  @Autowired
+  private SetmealDishMapper setmealDishMapper;
+
+  @Autowired
+  private SetmealMapper setmealMapper;
 
   /**
    * 新增菜品
@@ -65,7 +76,7 @@ public class DishServiceImpl implements DishService {
     List<Category> categories = categoryMapper.list(1);
     List<DishVO> dishVOs = page.getResult();
     for (int i = 0; i < dishVOs.size(); i++) {
-      for (int j = 0; j < categories.size(); j++) {
+      for (int j = 0; j < categories.size(); j++) { // 循环查询分类名称name，写入结果
         if (dishVOs.get(i).getCategoryId() == categories.get(j).getId()) {
           dishVOs.get(i).setCategoryName(categories.get(j).getName());
           break;
@@ -83,14 +94,16 @@ public class DishServiceImpl implements DishService {
    * @param dishDTO
    */
   @Transactional
-  public void updateDish(DishDTO dishDTO) { // TODO 有bug 菜品口味无法更新和删除
+  public void updateDish(DishDTO dishDTO) {
     log.info("开始修改菜品");
     Dish dish = new Dish();
     BeanUtils.copyProperties(dishDTO, dish);
     dishMapper.updateDish(dish);
-    List<DishFlavor> list = dishDTO.getFlavors();
-    if (list != null && list.size() > 0) {
-      dishFlavorMapper.updateFlavor(list);
+    List<DishFlavor> flavors = dishDTO.getFlavors();
+    // 直接把口味全删了，改成新传入的
+    dishFlavorMapper.deleteFlavorById(dish.getId());
+    if (flavors != null && flavors.size() > 0) {
+      dishFlavorMapper.insertFlavor(flavors, dish.getId());
     }
     log.info("修改菜品完成");
   }
@@ -117,5 +130,51 @@ public class DishServiceImpl implements DishService {
    */
   public List<Dish> getDishByCategoryId(Long categoryId) {
     return dishMapper.getDishByCategoryId(categoryId);
+  }
+
+  /**
+   * 删除菜品
+   * 
+   * @param
+   */
+  @Transactional
+  public void deleteDish(List<Long> ids) {
+    log.info("开始删除");
+    List<Dish> dishs = dishMapper.getDishsByIds(ids);
+    for (int i = 0; i < dishs.size(); i++) {
+      if (dishs.get(i).getStatus() == 1) { // 移除status=1的菜
+        log.info("{}为在售，不能删除", dishs.get(i).getName());
+        throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+      }
+      if (setmealDishMapper.countByDishId(dishs.get(i).getId()) > 0) { // 移除关联了套餐的菜品
+        log.info("{}关联了套餐，不能删除", dishs.get(i).getName());
+        throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+      }
+    }
+    if (dishs != null && dishs.size() > 0) {
+      dishMapper.deleteDish(dishs);
+      dishFlavorMapper.deleteFlavor(dishs);
+      log.info("删除完成");
+    }
+
+  }
+
+  /**
+   * 起售或停售
+   * 
+   * @param
+   */
+  @Transactional
+  public void useOrBan(Integer status, Long id) {
+    Dish dish = new Dish();
+    dish.setId(id);
+    dish.setStatus(status);
+    dishMapper.useOrBan(dish);
+    if (status == 0) {// 如果停售，包含此菜品的套餐也要停售！
+      SetmealDish setmealDish = setmealDishMapper.getSetmealById(id);
+      if (setmealDish != null) {
+        setmealMapper.banSetmeal(setmealDish.getSetmealId());
+      }
+    }
   }
 }

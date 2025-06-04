@@ -2,6 +2,7 @@ package com.sky.handler;
 
 import com.sky.constant.MessageConstant;
 import com.sky.exception.BaseException;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.PasswordEditFailedException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @SuppressWarnings("rawtypes")
     public Result exceptionHandler(PasswordEditFailedException ex) {
+        return Result.error(ex.getMessage());
+    }
+
+    /**
+     * 捕获删除异常
+     * 
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler
+    @SuppressWarnings("rawtypes")
+    public Result exceptionHandler(DeletionNotAllowedException ex) {
         return Result.error(ex.getMessage());
     }
 

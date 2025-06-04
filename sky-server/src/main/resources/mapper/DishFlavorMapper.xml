@@ -21,7 +21,7 @@
 
   </insert>
 
-  <!-- updateFlavor -->
+  <!-- getFlavorsById -->
 
   <select id="getFlavorsById" resultType="com.sky.entity.DishFlavor">
     select *
@@ -33,12 +33,31 @@
   <!-- updateFlavor -->
 
   <update id="updateFlavor" parameterType="com.sky.entity.DishFlavor">
-    <foreach collection="list" item="flavor" separator=";">
       UPDATE dish_flavor
-      SET value = #{flavor.value}
-      WHERE id = #{flavor.id} AND dish_id=#{flavor.dishId}
-    </foreach>
+      SET value = #{value}
+      WHERE name = #{name} AND dish_id=#{dishId}
   </update>
+
+
+  <!-- deleteFlavor -->
+
+  <delete id="deleteFlavor" parameterType="com.sky.entity.Dish">
+    DELETE FROM dish_flavor
+    WHERE dish_id IN
+    <foreach collection="dishs" item="dish" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+
+  </delete>
+
+
+  <!-- deleteFlavorById -->
+
+  <delete id="deleteFlavorById" parameterType="Long">
+delete from dish_flavor
+    <where> dish_id=#{dishId}
+    </where>
+  </delete>
 
 
 </mapper>

@@ -3,12 +3,14 @@ package com.sky.controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sky.dto.DishDTO;
@@ -64,7 +66,7 @@ public class DishController {
   @SuppressWarnings("rawtypes")
   @PutMapping
   public Result updateDish(@RequestBody DishDTO dishDTO) {
-    log.info("修改员工:{}", dishDTO);
+    log.info("修改菜品:{}", dishDTO);
     dishService.updateDish(dishDTO);
     return Result.success();
   }
@@ -95,4 +97,30 @@ public class DishController {
     return Result.success(dishs);
   }
 
+  /**
+   * 删除菜品
+   * 
+   * @param ids
+   * @return
+   */
+  @SuppressWarnings("rawtypes")
+  @DeleteMapping("")
+  public Result deleteDish(@RequestParam List<Long> ids) {
+    log.info("删除菜品：{}", ids.toString());
+    dishService.deleteDish(ids);
+    return Result.success();
+  }
+
+  /**
+   * 起售或停售
+   * 
+   * @return
+   */
+  @SuppressWarnings("rawtypes")
+  @PostMapping("/status/{status}")
+  public Result useOrBan(@PathVariable Integer status, @RequestParam Long id) {
+    log.info("设置菜品:{}为{}", id, status);
+    dishService.useOrBan(status, id);
+    return Result.success();
+  }
 }

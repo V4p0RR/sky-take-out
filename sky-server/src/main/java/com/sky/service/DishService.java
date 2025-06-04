@@ -49,4 +49,19 @@ public interface DishService {
    */
   List<Dish> getDishByCategoryId(Long categoryId);
 
+  /**
+   * 删除菜品
+   * 
+   * @param ids
+   */
+  void deleteDish(List<Long> ids);
+
+  /**
+   * 起售或停售
+   * 
+   * @param status
+   * @param id
+   */
+  void useOrBan(Integer status, Long id);
+
 }

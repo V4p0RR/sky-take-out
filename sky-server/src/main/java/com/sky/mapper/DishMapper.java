@@ -9,7 +9,6 @@ import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishVO;
 
@@ -65,4 +64,26 @@ public interface DishMapper {
      */
     List<Dish> getDishByCategoryId(Long categoryId);
 
+    /**
+     * 删除菜品
+     * 
+     * @param ids
+     */
+    void deleteDish(List<Dish> dishs);
+
+    /**
+     * 起售或停售
+     * 
+     * @param status
+     * @param id
+     */
+    @AutoFill(OperationType.UPDATE)
+    void useOrBan(Dish dish);
+
+    /**
+     * 根据id列表获得菜品
+     * 
+     * @return
+     */
+    List<Dish> getDishsByIds(List<Long> ids);
 }

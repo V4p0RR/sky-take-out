@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 
 @Mapper
@@ -21,7 +22,7 @@ public interface DishFlavorMapper {
    * 
    * @param list
    */
-  void updateFlavor(List<DishFlavor> list);
+  void updateFlavor(DishFlavor dishFlavor);
 
   /**
    * 根据id查找口味
@@ -29,5 +30,19 @@ public interface DishFlavorMapper {
    * @param list
    */
   List<DishFlavor> getFlavorsById(Long id);
+
+  /**
+   * 根据ids删除口味
+   * 
+   * @param dishs
+   */
+  void deleteFlavor(List<Dish> dishs);
+
+  /**
+   * 根据dishid删除口味
+   * 
+   * @param dishs
+   */
+  void deleteFlavorById(Long dishId);
 
 }

@@ -30,7 +30,7 @@ from dish
       <if test="categoryId!=null"> category_id=#{categoryId}
       </if>
       <if test="name!=null and name!=''">
-    and name=#{name}
+    and name like concat('%',#{name},'%')
       </if>
       <if test="status!=null">
     and status=#{status}
@@ -80,6 +80,39 @@ from dish
       <if test="categoryId!=null"> category_id=#{category_id}
       </if>
     </where>
+  </select>
+
+
+  <!-- deleteDish -->
+
+  <delete id="deleteDish" parameterType="com.sky.entity.Dish">
+    DELETE FROM dish
+    WHERE id IN
+    <foreach collection="dishs" item="dish" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+
+  <!-- useOrBan -->
+
+  <update id="useOrBan" parameterType="com.sky.entity.Dish">
+ update dish
+    <set> status=#{status}, update_time=#{updateTime}, update_user=#{updateUser}
+    </set>
+ where id=#{id}
+ 
+  </update>
+
+
+  <!-- getDishsByIds -->
+
+  <select id="getDishsByIds" parameterType="java.lang.Long" resultType="com.sky.entity.Dish">
+    SELECT * FROM dish
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
   </select>
 
 
