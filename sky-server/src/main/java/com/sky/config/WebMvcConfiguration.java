@@ -42,7 +42,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/employee/login");
-    }
+    } // 只拦截admin下的接口 因为用户端没有jwt
 
     /**
      * 扩展mvc框架的消息转换器
