@@ -1,4 +1,4 @@
-package com.sky.controller.admin.user;
+package com.sky.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/user/shop")
 @Slf4j
 public class ShopController {
+  @SuppressWarnings("rawtypes")
   @Autowired
   private RedisTemplate redisTemplate;
 
