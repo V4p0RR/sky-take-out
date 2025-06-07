@@ -1,6 +1,8 @@
 package com.sky.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,7 @@ public class ShopController {
    */
   @SuppressWarnings("rawtypes")
   @PutMapping("/{status}")
+  @CacheEvict(cacheNames = "shopCache", allEntries = true)
   public Result setShopStatus(@PathVariable Integer status) {
     log.info("设置店铺状态:{}", status);
     redisTemplate.opsForValue().set("SHOP_STATUS", status.toString());

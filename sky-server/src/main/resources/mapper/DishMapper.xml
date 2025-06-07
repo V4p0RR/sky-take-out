@@ -89,7 +89,7 @@ from dish
     DELETE FROM dish
     WHERE id IN
     <foreach collection="dishs" item="dish" open="(" separator="," close=")">
-      #{id}
+      #{dish.id}
     </foreach>
   </delete>
 

@@ -45,7 +45,7 @@
     DELETE FROM dish_flavor
     WHERE dish_id IN
     <foreach collection="dishs" item="dish" open="(" separator="," close=")">
-      #{id}
+      #{dish.id}
     </foreach>
 
   </delete>

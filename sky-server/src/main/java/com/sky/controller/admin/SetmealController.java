@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sky.dto.SetmealDTO;
@@ -36,6 +36,7 @@ public class SetmealController {
    */
   @SuppressWarnings("rawtypes")
   @PostMapping
+  @CacheEvict(cacheNames = "setmealCache", allEntries = true)
   public Result insertSetmeal(@RequestBody SetmealDTO setmealDTO) {
     log.info("插入套餐:{}", setmealDTO);
     setmealService.insertSetmeal(setmealDTO);
@@ -76,6 +77,7 @@ public class SetmealController {
    */
   @SuppressWarnings("rawtypes")
   @PutMapping
+  @CacheEvict(cacheNames = { "setmealCache", "dishCache" }, allEntries = true)
   public Result updateSetmeal(@RequestBody SetmealDTO setmealDTO) {
     log.info("修改套餐{}", setmealDTO);
     setmealService.updateSetmeal(setmealDTO);
@@ -89,6 +91,7 @@ public class SetmealController {
    */
   @DeleteMapping
   @SuppressWarnings("rawtypes")
+  @CacheEvict(cacheNames = { "setmealCache", "dishCache" }, allEntries = true)
   public Result deleteSetmeal(Long[] ids) {
     log.info("删除套餐：{}", ids.toString());
     setmealService.deleteSetmeal(ids);
@@ -101,6 +104,7 @@ public class SetmealController {
    * @param
    * @return
    */
+  @CacheEvict(cacheNames = { "setmealCache", "dishCache" }, allEntries = true)
   @SuppressWarnings("rawtypes")
   @PostMapping("/status/{status}")
   public Result useOrBanSetmeal(@PathVariable Integer status, Long id) {

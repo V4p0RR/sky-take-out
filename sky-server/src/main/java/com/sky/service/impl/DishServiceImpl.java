@@ -51,7 +51,7 @@ public class DishServiceImpl implements DishService {
    * 新增菜品
    */
   @Transactional
-  public void insertDish(DishDTO dishDTO) { // TODO 有空优化插入菜品 名称不能重复
+  public void insertDish(DishDTO dishDTO) {
     // 先插入这道菜进菜品表
     Dish dish = new Dish();
     BeanUtils.copyProperties(dishDTO, dish);

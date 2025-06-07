@@ -1,6 +1,7 @@
 package com.sky.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public class ShopController {
    * @return
    */
   @GetMapping("/status")
+  @Cacheable(cacheNames = "shopCache", key = "'status'")
   public Result<Integer> getShopStatus() {
     log.info("获取店铺营业状态");
     Integer status = Integer.valueOf(redisTemplate.opsForValue().get("SHOP_STATUS").toString());

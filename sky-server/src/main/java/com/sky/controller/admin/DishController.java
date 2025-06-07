@@ -3,6 +3,7 @@ package com.sky.controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ public class DishController {
    */
   @SuppressWarnings("rawtypes")
   @PostMapping
+  @CacheEvict(cacheNames = { "dishCache", "setmealCache" }, allEntries = true)
   public Result insertDish(@RequestBody DishDTO dishDTO) {
     log.info("新增菜品:{}", dishDTO);
     dishService.insertDish(dishDTO);
@@ -65,6 +67,7 @@ public class DishController {
    */
   @SuppressWarnings("rawtypes")
   @PutMapping
+  @CacheEvict(cacheNames = { "dishCache", "setmealCache" }, allEntries = true)
   public Result updateDish(@RequestBody DishDTO dishDTO) {
     log.info("修改菜品:{}", dishDTO);
     dishService.updateDish(dishDTO);
@@ -105,6 +108,7 @@ public class DishController {
    */
   @SuppressWarnings("rawtypes")
   @DeleteMapping("")
+  @CacheEvict(cacheNames = { "dishCache", "setmealCache" }, allEntries = true)
   public Result deleteDish(@RequestParam List<Long> ids) {
     log.info("删除菜品：{}", ids.toString());
     dishService.deleteDish(ids);
@@ -118,6 +122,7 @@ public class DishController {
    */
   @SuppressWarnings("rawtypes")
   @PostMapping("/status/{status}")
+  @CacheEvict(cacheNames = { "dishCache", "setmealCache" }, allEntries = true)
   public Result useOrBan(@PathVariable Integer status, @RequestParam Long id) {
     log.info("设置菜品:{}为{}", id, status);
     dishService.useOrBan(status, id);
