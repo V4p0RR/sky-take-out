@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sky.mapper.ShoppingCartMapper">
+
+
+
+
+  <!-- getDishByCart -->
+
+  <select id="getDishByCart" parameterType="com.sky.entity.ShoppingCart" resultType="com.sky.entity.ShoppingCart">
+select * from shopping_cart
+    <where> user_id=#{userId} and dish_id=#{dishId} 
+      <if test="dishFlavor!=null">
+      and dish_flavor=#{dishFlavor}
+      </if>
+    </where>
+
+  </select>
+
+  <!-- getSetmealByCart -->
+
+  <select id="getSetmealByCart" parameterType="com.sky.entity.ShoppingCart" resultType="com.sky.entity.ShoppingCart">
+  select * from shopping_cart
+    <where>  user_id=#{userId} and setmeal_id=#{setmealId}
+    </where>
+
+
+  </select>
+
+
+
+  <!-- updateCart_Dish -->
+
+  <update id="updateCart_Dish" parameterType="com.sky.entity.ShoppingCart">
+   update shopping_cart
+    <set> number=number+#{number}, amount=amount+#{amount}
+    </set>
+    <where> user_id=#{userId} and dish_id=#{dishId} and dish_flavor=#{dishFlavor}
+    </where>
+  </update>
+
+
+  <!-- updateCart_Setmeal -->
+
+  <update id="updateCart_Setmeal" parameterType="com.sky.entity.ShoppingCart">
+   update shopping_cart
+    <set>
+    number = number+#{number},amount= amount+#{amount}
+    </set>
+    <where> user_id=#{userId} and setmeal_id=#{setmealId}
+    </where>
+
+  </update>
+
+
+
+
+  <!-- addCart_Dish -->
+
+  <insert id="addCart_Dish" parameterType="com.sky.entity.ShoppingCart">
+   insert into shopping_cart(name,image,user_id,dish_id,dish_flavor,number,amount,create_time)
+   values(#{name},#{image},#{userId},#{dishId},#{dishFlavor},#{number},#{amount},#{createTime})
+
+  </insert>
+
+
+  <!-- addCart_Setmeal -->
+
+  <insert id="addCart_Setmeal" parameterType="com.sky.entity.ShoppingCart">
+insert into shopping_cart(name,image,user_id,setmeal_id,number,amount,create_time)
+values(#{name},#{image},#{userId},#{setmealId},#{number},#{amount},#{createTime})
+
+  </insert>
+
+
+  <!-- list -->
+
+  <select id="list" parameterType="Long" resultType="com.sky.entity.ShoppingCart">
+select * from shopping_cart
+where user_id=#{userId}
+
+  </select>
+
+
+
+
+
+  <!-- subShoppingCart -->
+
+  <update id="subShoppingCart" parameterType="com.sky.entity.ShoppingCart">
+  update shopping_cart
+    <set> number=number-1,amount=amount-#{amount}
+    </set>
+    <where>
+      <if test="dishId!=null"> dish_id=#{dishId}
+      </if>
+      <if test="setmealId!=null">
+   and setmeal_id=#{setmealId}
+      </if>
+      <if test="dishFlavor!=null">
+      and dish_flavor=#{dishFlavor}
+      </if>
+    </where>
+  </update>
+
+
+  <!-- deleteShoppingCart -->
+
+  <delete id="deleteShoppingCart" parameterType="Long">
+delete from shopping_cart
+    <where> id=#{id}
+    </where>
+  </delete>
+
+
+
+  <!-- clean -->
+
+  <delete id="clean" parameterType="Long">
+delete from shopping_cart
+    <where> user_id=#{userId}
+    </where>
+
+  </delete>
+
+
+</mapper>
