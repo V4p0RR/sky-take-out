@@ -45,13 +45,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         .build();
     // 判断购物车里是否有这个套餐或菜品
     if (shoppingCart.getDishId() != null && shoppingCartMapper.getDishByCart(shoppingCart) != null) {
-      // 如果有这个菜品，菜品数量加一,并修改金额
-      shoppingCart.setAmount(dishMapper.getDishById(shoppingCart.getDishId()).getPrice());
+      // 如果有这个菜品，菜品数量加一
       shoppingCart.setNumber(1);
       shoppingCartMapper.updateCart_Dish(shoppingCart);
     } else if (shoppingCart.getSetmealId() != null && shoppingCartMapper.getSetmealByCart(shoppingCart) != null) {
-      // 如果有这个套餐，套餐数量加一,并修改金额
-      shoppingCart.setAmount(setmealMapper.getSetmealById(shoppingCart.getSetmealId()).getPrice());
+      // 如果有这个套餐，套餐数量加一
       shoppingCart.setNumber(1);
       shoppingCartMapper.updateCart_Setmeal(shoppingCart);
     } else {
@@ -103,10 +101,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         .setmealId(shoppingCartDTO.getSetmealId())
         .dishFlavor(shoppingCartDTO.getDishFlavor())
         .build();
-    // 判断是菜品还是套餐,分别获取单价
+    // 判断是菜品还是套餐
     if (shoppingCart.getDishId() != null && shoppingCart.getSetmealId() == null) {
-      BigDecimal price = dishMapper.getDishById(shoppingCart.getDishId()).getPrice();
-      shoppingCart.setAmount(price);
       // 判断当前操作应该是删除还是-1
       if (shoppingCartMapper.getDishByCart(shoppingCart).getNumber() != 1) {
         shoppingCartMapper.subShoppingCart(shoppingCart);
@@ -115,8 +111,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
       }
     }
     if (shoppingCart.getDishId() == null && shoppingCart.getSetmealId() != null) {
-      BigDecimal price = setmealMapper.getSetmealById(shoppingCart.getSetmealId()).getPrice();
-      shoppingCart.setAmount(price);
       // 判断当前操作应该是删除还是-1
       if (shoppingCartMapper.getSetmealByCart(shoppingCart).getNumber() != 1) {
         shoppingCartMapper.subShoppingCart(shoppingCart);

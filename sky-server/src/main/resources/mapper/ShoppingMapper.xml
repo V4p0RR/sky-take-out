@@ -35,9 +35,10 @@ select * from shopping_cart
 
   <update id="updateCart_Dish" parameterType="com.sky.entity.ShoppingCart">
    update shopping_cart
-    <set> number=number+#{number}, amount=amount+#{amount}
+    <set> number=number+#{number}
     </set>
-    <where> user_id=#{userId} and dish_id=#{dishId} and dish_flavor=#{dishFlavor}
+    <where> user_id=#{userId} and dish_id=#{dishId} 
+      <if test="dishFlavor!=null and dishFlavor!=''"> and dish_flavor=#{dishFlavor}</if>
     </where>
   </update>
 
@@ -47,7 +48,7 @@ select * from shopping_cart
   <update id="updateCart_Setmeal" parameterType="com.sky.entity.ShoppingCart">
    update shopping_cart
     <set>
-    number = number+#{number},amount= amount+#{amount}
+    number = number+#{number}
     </set>
     <where> user_id=#{userId} and setmeal_id=#{setmealId}
     </where>
@@ -91,7 +92,7 @@ where user_id=#{userId}
 
   <update id="subShoppingCart" parameterType="com.sky.entity.ShoppingCart">
   update shopping_cart
-    <set> number=number-1,amount=amount-#{amount}
+    <set> number=number-1
     </set>
     <where>
       <if test="dishId!=null"> dish_id=#{dishId}
