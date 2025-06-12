@@ -149,9 +149,9 @@
 
 
 
-        <!-- getOrdersByStatusAndTime -->
+        <!-- getOrdersByStatusAndLTTime -->
 
-        <select id="getOrdersByStatusAndTime" resultType="com.sky.entity.Orders">
+        <select id="getOrdersByStatusAndLTTime" resultType="com.sky.entity.Orders">
                 select *
                 from orders
                 <where>
