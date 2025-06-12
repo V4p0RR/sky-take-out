@@ -1,9 +1,9 @@
 package com.sky.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
@@ -47,4 +47,40 @@ public interface OrderMapper {
    * @return
    */
   Page<OrderVO> historyOrders(OrdersPageQueryDTO ordersPageQueryDTO);
+
+  /**
+   * 管理端订单搜索
+   * 
+   * @param ordersPageQueryDTO
+   * @return
+   */
+  Page<OrderVO> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+
+  /**
+   * 查询各个状态的订单数量统计
+   * 
+   * @return
+   */
+  Integer countByStatus(Integer status);
+
+  /**
+   * 管理端接单
+   * 
+   * @param ordersConfirmDTO
+   */
+  void confirm(OrdersConfirmDTO ordersConfirmDTO);
+
+  /**
+   * 管理端派送订单
+   * 
+   * @param id
+   */
+  void delivery(Long id);
+
+  /**
+   * 订单完成
+   * 
+   * @param orders
+   */
+  void complete(Orders orders);
 }

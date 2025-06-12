@@ -71,4 +71,82 @@
 
 
 
+        <!-- conditionSearch -->
+
+        <select id="conditionSearch" parameterType="com.sky.dto.OrdersPageQueryDTO" resultType="com.sky.vo.OrderVO">
+                select *
+                from orders
+                <where>
+                        <if test="beginTime!=null">
+                         order_time &gt;= #{beginTime}
+                        </if>
+                        <if test="endTime!=null">
+                         and order_time &lt;= #{endTime}
+                        </if>
+                        <if test="number!=null and number!=''">
+                         and  number = #{number}
+                        </if>
+                        <if test="phone!=null and phone!=''">
+                         and phone=#{phone}
+                        </if>
+                        <if test="status != null">
+                         and status=#{status}
+                        </if>
+                </where>
+
+        </select>
+
+
+
+        <!-- countByStatus -->
+
+        <select id="countByStatus" parameterType="Integer" resultType="Integer">
+                select count(*)
+                from orders
+                <where>
+                        <if test="status != null">
+                         status = #{status}
+                        </if>
+                </where>
+
+        </select>
+
+
+        <!-- confirm -->
+
+        <update id="confirm" parameterType="com.sky.dto.OrdersConfirmDTO">
+                update orders
+                <set> status=#{status}
+                </set>
+                <where> id=#{id}
+                </where>
+
+        </update>
+
+
+
+        <!-- delivery -->
+
+        <update id="delivery" parameterType="Long">
+          update orders
+                <set>
+                status = 4
+                </set>
+                <where> id=#{id}
+                </where>
+        </update>
+
+
+
+        <!-- complete -->
+
+        <update id="complete" parameterType="com.sky.entity.Orders">
+                update orders
+                <set> status=#{status}, delivery_time=#{deliveryTime}
+                </set>
+                where id=#{id}
+        </update>
+
+
+
 </mapper>

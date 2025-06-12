@@ -14,8 +14,10 @@ import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -29,6 +31,7 @@ import com.sky.mapper.ShoppingCartMapper;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 
@@ -193,6 +196,115 @@ public class OrderServiceImpl implements OrderService {
       orderDetails.get(i).setOrderId(orders.getId());
     }
     orderDetailMapper.insert(orderDetails); // 插入orderdetail表
+  }
 
+  /**
+   * 管理端订单搜索
+   * 
+   * @param
+   * @return
+   */
+  public PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+    PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+    Page<OrderVO> page = orderMapper.conditionSearch(ordersPageQueryDTO);
+    List<OrderVO> orderVOs = page.getResult();
+    for (int i = 0; i < orderVOs.size(); i++) { // 插入订单菜品名称 字符串
+      Long orderId = orderVOs.get(i).getId();
+      List<OrderDetail> orderDetails = orderDetailMapper.list(Math.toIntExact(orderId));
+      String orderDishes = null;
+      for (int j = 0; j < orderDetails.size(); j++) {
+        if (j == 0) {
+          orderDishes = orderDetails.get(j).getName();
+        } else {
+          orderDishes += "," + orderDetails.get(j).getName();
+        }
+      }
+      orderVOs.get(i).setOrderDishes(orderDishes);
+    }
+    PageResult pageResult = PageResult.builder()
+        .total(page.getTotal())
+        .records(orderVOs)
+        .build();
+    return pageResult;
+  }
+
+  /**
+   * 管理端查询订单详情
+   * 
+   * @param id
+   * @return
+   */
+  public OrderVO details(Long id) {
+    Orders orders = orderMapper.getById(id);
+    OrderVO orderVO = new OrderVO();
+    BeanUtils.copyProperties(orders, orderVO);
+    List<OrderDetail> orderDetails = orderDetailMapper.list(Math.toIntExact(id));
+    orderVO.setOrderDetailList(orderDetails);
+    return orderVO;
+  }
+
+  /**
+   * 查询各个状态的订单数量统计
+   * 
+   * @return
+   */
+  public OrderStatisticsVO statistics() {
+    OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+    // 查询待接单数量
+    orderStatisticsVO.setToBeConfirmed(orderMapper.countByStatus(Orders.TO_BE_CONFIRMED));
+    // 查询待派送数量
+    orderStatisticsVO.setConfirmed(orderMapper.countByStatus(Orders.CONFIRMED));
+    // 查询派送中数量
+    orderStatisticsVO.setDeliveryInProgress(orderMapper.countByStatus(Orders.DELIVERY_IN_PROGRESS));
+    return orderStatisticsVO;
+  }
+
+  /**
+   * 管理端拒绝订单
+   * 
+   * @param ordersRejectionDTO
+   * @return
+   */
+  public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
+    Orders orders = orderMapper.getById(ordersRejectionDTO.getId());
+    orders.setStatus(Orders.CANCELLED);
+    orders.setCancelReason(ordersRejectionDTO.getRejectionReason());
+    orders.setCancelTime(LocalDateTime.now());
+    orderMapper.cancel(orders);
+    // 更新订单状态为已取消
+    orders.setStatus(Orders.CANCELLED);
+    orderMapper.cancel(orders);
+  }
+
+  /**
+   * 管理端接单
+   * 
+   * @param ordersConfirmDTO
+   */
+  public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
+    orderMapper.confirm(ordersConfirmDTO);
+  }
+
+  /**
+   * 管理端派送订单
+   * 
+   * @param id
+   */
+  public void delivery(Long id) {
+    orderMapper.delivery(id);
+  }
+
+  /**
+   * 订单完成
+   * 
+   * @param id
+   */
+  public void complete(Long id) {
+    Orders orders = Orders.builder()
+        .id(id)
+        .status(Orders.COMPLETED)
+        .deliveryTime(LocalDateTime.now())
+        .build();
+    orderMapper.complete(orders);
   }
 }
