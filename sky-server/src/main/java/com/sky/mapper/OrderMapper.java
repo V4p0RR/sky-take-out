@@ -1,5 +1,7 @@
 package com.sky.mapper;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -95,4 +97,28 @@ public interface OrderMapper {
    * @return
    */
   List<Orders> getOrdersByStatusAndLTTime(Integer status, LocalDateTime time);
+
+  /**
+   * 指定时间内营业额统计
+   * 
+   * @param date
+   * @return
+   */
+  BigDecimal turnoverStatistics(LocalDate date);
+
+  /**
+   * 用户统计
+   * 
+   * @param date
+   * @return
+   */
+  Long userStatistics(LocalDate date);
+
+  /**
+   * 用户统计（指定日期之前的用户总数）
+   * 
+   * @param date
+   * @return
+   */
+  Long userStatisticsBeforeDate(LocalDate date);
 }

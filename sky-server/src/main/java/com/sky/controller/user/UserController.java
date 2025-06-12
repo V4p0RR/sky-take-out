@@ -53,4 +53,15 @@ public class UserController {
     log.info("登陆成功,token:{},openid:{}", token, user.getOpenid());
     return Result.success(userLoginVO);
   }
+
+  /**
+   * 用户登出
+   * 
+   * @return
+   */
+  @PostMapping("/logout")
+  public Result<Object> logout() {
+    log.info("用户登出");
+    return Result.success();
+  }
 }

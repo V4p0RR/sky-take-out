@@ -168,4 +168,54 @@
 
 
 
+        <!-- turnoverStatistics -->
+
+        <select id="turnoverStatistics" parameterType="java.time.LocalDate" resultType="java.math.BigDecimal">
+                 select sum(amount)
+                 from orders
+                <where>
+                        <if test="date!=null">
+                         date_format(order_time, '%Y-%m-%d') = #{date}
+                        </if>
+                         and status = 5
+                </where>
+
+
+        </select>
+
+
+
+        <!-- userStatistics -->
+
+        <select id="userStatistics" parameterType="java.time.LocalDate" resultType="java.lang.Long">
+                select count(*)
+                from user
+                <where>
+                        <if test="date!=null">
+                         date_format(create_time, '%Y-%m-%d') = #{date}
+                        </if>
+                </where>
+
+
+        </select>
+
+
+
+
+        <!-- userStatisticsBeforeDate -->
+
+        <select id="userStatisticsBeforeDate" parameterType="java.time.LocalDate" resultType="java.lang.Long">
+       select count(*)
+        from user
+                <where>
+                        <if test="date!=null">
+                         date_format(create_time, '%Y-%m-%d') &lt;= #{date}
+                        </if>
+                </where>
+
+
+        </select>
+
+
+
 </mapper>
