@@ -2,13 +2,18 @@ package com.sky.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.websocket.server.ServerEndpointConfig;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
@@ -34,6 +39,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
   private OrderDetailMapper orderDetailMapper;
   @Autowired
   private ShoppingCartMapper shoppingCartMapper;
+
+  @Autowired
+  private WebSocketServer webSocketServer;
 
   /**
    * 用户下单
@@ -109,6 +118,7 @@ public class OrderServiceImpl implements OrderService {
    * @param
    * @return
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) {
     Orders orders = Orders.builder()
         .status(Orders.TO_BE_CONFIRMED)
@@ -117,6 +127,13 @@ public class OrderServiceImpl implements OrderService {
         .number(ordersPaymentDTO.getOrderNumber())
         .build();
     orderMapper.payment(orders);
+    // 向商家管理端推送来单消息
+    Map map = new HashMap();
+    map.put("type", 1);// 1:来单,2:催单
+    map.put("orderId", orders.getId());// 订单id
+    map.put("content", "有新的订单！订单号:" + orders.getNumber());// 消息内容
+    String json = JSON.toJSONString(map);
+    webSocketServer.sendToAllClient(json); // 向所有客户端推送消息(其实就是管理端)
     return new OrderPaymentVO();
   }
 
@@ -306,5 +323,20 @@ public class OrderServiceImpl implements OrderService {
         .deliveryTime(LocalDateTime.now())
         .build();
     orderMapper.complete(orders);
+  }
+
+  /**
+   * 用户催单
+   * 
+   * @param id
+   */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  public void reminder(Long id) {
+    Map map = new HashMap();
+    map.put("type", 2); // 1:来单,2:催单
+    map.put("orderId", id); // 订单id
+    map.put("content", "用户催单！订单号:" + orderMapper.getById(id).getNumber()); // 消息内容
+    String json = JSON.toJSONString(map);
+    webSocketServer.sendToAllClient(json); // 向所有客户端推送消息(其实就是管理端)
   }
 }
