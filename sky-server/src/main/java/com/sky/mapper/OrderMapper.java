@@ -1,5 +1,8 @@
 package com.sky.mapper;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.github.pagehelper.Page;
@@ -83,4 +86,13 @@ public interface OrderMapper {
    * @param orders
    */
   void complete(Orders orders);
+
+  /**
+   * 查询符合时间和状态的订单
+   * 
+   * @param pendingPayment
+   * @param time
+   * @return
+   */
+  List<Orders> getOrdersByStatusAndLTTime(Integer status, LocalDateTime time);
 }
