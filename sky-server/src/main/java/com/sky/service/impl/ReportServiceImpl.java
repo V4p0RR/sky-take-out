@@ -9,8 +9,12 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sky.entity.Orders;
+import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 
@@ -21,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ReportServiceImpl implements ReportService {
   @Autowired
   private OrderMapper orderMapper;
+  @Autowired
+  private OrderDetailMapper orderDetailMapper;
 
   /**
    * 生成指定时间段内的日期列表
@@ -92,5 +98,75 @@ public class ReportServiceImpl implements ReportService {
         .totalUserList(null == userCountBeforeDateList ? null : StringUtils.join(userCountBeforeDateList, ","))
         .build();
     return userReportVO;
+  }
+
+  /*
+   * 订单统计
+   * 
+   * @param begin 开始日期
+   * 
+   * @param end 结束日期
+   * 
+   * @return
+   */
+  public OrderReportVO ordersStatistics(LocalDate begin, LocalDate end) {
+    List<LocalDate> dateList = dateList(begin, end);
+    List<Long> orderCountList = new ArrayList<>();
+    List<Long> validOrderCountList = new ArrayList<>();
+    Long totalOrderCount;
+    Long validOrderCount;
+    Double orderComplectionRate;
+    totalOrderCount = orderMapper.getTotalOrderCount(null, null) == null ? 0L
+        : orderMapper.getTotalOrderCount(null, null);
+    validOrderCount = orderMapper.getTotalOrderCount(Orders.COMPLETED, null) == null ? 0L
+        : orderMapper.getTotalOrderCount(Orders.COMPLETED, null);
+    orderComplectionRate = totalOrderCount == 0 ? 0.0
+        : (double) validOrderCount / totalOrderCount;
+    for (LocalDate date : dateList) {
+      Long orderCount = orderMapper.getTotalOrderCount(null, date) == null ? 0L
+          : orderMapper.getTotalOrderCount(null, date);
+      Long validOrderCountUnit = orderMapper.getTotalOrderCount(Orders.COMPLETED, date) == null ? 0L
+          : orderMapper.getTotalOrderCount(Orders.COMPLETED, date);
+      orderCountList.add(orderCount);
+      validOrderCountList.add(validOrderCountUnit);
+    }
+    OrderReportVO orderReportVO = OrderReportVO.builder()
+        .dateList(null == dateList ? null : StringUtils.join(dateList, ","))
+        .orderCompletionRate(orderComplectionRate)
+        .orderCountList(null == orderCountList ? null : StringUtils.join(orderCountList, ","))
+        .totalOrderCount(Math.toIntExact(totalOrderCount))
+        .validOrderCount(Math.toIntExact(validOrderCount))
+        .validOrderCountList(null == validOrderCountList ? null : StringUtils.join(validOrderCountList, ","))
+        .build();
+    return orderReportVO;
+  }
+
+  /*
+   * 销售额前十统计
+   * 
+   * @param begin 开始日期
+   * 
+   * @param end 结束日期
+   * 
+   * @return
+   */
+  public SalesTop10ReportVO top10(LocalDate begin, LocalDate end) {
+    List<String> nameList = new ArrayList<>();
+    List<Long> numberList = new ArrayList<>();
+    List<Orders> ordersList = orderMapper.getOrdersByStatusAndLTTime(Orders.COMPLETED, null);
+    if (ordersList == null || ordersList.isEmpty()) {
+      return SalesTop10ReportVO.builder().build();
+    }
+    nameList = orderDetailMapper.getNameByOrders(ordersList);
+    for (String name : nameList) {
+      Long number = orderDetailMapper.getNumberByName(name, ordersList) == null ? 0L
+          : orderDetailMapper.getNumberByName(name, ordersList);
+      numberList.add(number);
+    }
+    SalesTop10ReportVO salesTop10ReportVO = SalesTop10ReportVO.builder()
+        .nameList(null == nameList ? null : StringUtils.join(nameList, ","))
+        .numberList(null == numberList ? null : StringUtils.join(numberList, ","))
+        .build();
+    return salesTop10ReportVO;
   }
 }

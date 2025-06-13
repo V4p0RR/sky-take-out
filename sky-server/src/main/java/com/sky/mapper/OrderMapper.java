@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.repository.query.Param;
 
 import com.github.pagehelper.Page;
 import com.sky.dto.OrdersConfirmDTO;
@@ -121,4 +122,20 @@ public interface OrderMapper {
    * @return
    */
   Long userStatisticsBeforeDate(LocalDate date);
+
+  /**
+   * 按照状态获取订单总数
+   * 
+   * @param completed
+   * @return
+   */
+  Long getTotalOrderCount(@Param("status") Integer status, @Param("date") LocalDate date);
+
+  /**
+   * 获取指定日期的订单idList
+   * 
+   * @param date
+   * @return
+   */
+  List<Long> getIdByDate(LocalDate date);
 }

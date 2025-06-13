@@ -29,4 +29,42 @@ from order_detail
 
 
 
+  <!-- getNameByOrders -->
+
+  <select id="getNameByOrders" parameterType="com.sky.entity.Orders" resultType="java.lang.String">
+    select distinct name 
+    from order_detail 
+    <where> order_id in 
+      <foreach collection="ordersList" item="order" open="(" separator="," close=")">
+        #{order.id}
+      </foreach>
+    </where>
+    GROUP BY name
+    ORDER BY SUM(number) DESC
+    LIMIT 10
+  </select>
+
+
+
+  <!-- getNumberByName -->
+
+  <select id="getNumberByName" resultType="java.lang.Long">
+select sum(number)
+from order_detail
+    <where> order_id in 
+      <foreach collection="ordersList" item="order" open="(" separator="," close=")">
+        #{order.id}
+      </foreach>
+    </where>
+    <if test="name != null and name != ''">
+      and name = #{name}
+    </if>
+
+
+
+  </select>
+
+
+
+
 </mapper>
