@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
@@ -138,4 +139,23 @@ public interface OrderMapper {
    * @return
    */
   List<Long> getIdByDate(LocalDate date);
+
+  /**
+   * 根据动态条件统计订单数量
+   * 
+   * @param map
+   * @return
+   */
+  @SuppressWarnings("rawtypes")
+  Integer countByMap(Map map);
+
+  /**
+   * 根据动态条件统计营业额数据
+   * 
+   * @param map
+   * @return
+   */
+  @SuppressWarnings("rawtypes")
+  Double sumByMap(Map map);
+
 }

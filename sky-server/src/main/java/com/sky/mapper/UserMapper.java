@@ -1,5 +1,7 @@
 package com.sky.mapper;
 
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sky.entity.User;
@@ -22,4 +24,12 @@ public interface UserMapper {
    */
   void insertUser(User user);
 
+  /**
+   * 根据动态条件统计用户数量
+   * 
+   * @param map
+   * @return
+   */
+  @SuppressWarnings("rawtypes")
+  Integer countByMap(Map map);
 }
